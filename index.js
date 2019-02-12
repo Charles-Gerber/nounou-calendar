@@ -69,6 +69,13 @@ function getAccessToken(oAuth2Client, callback) {
   })
 }
 
+const LOCATION_1 = [`Lebouteux`]
+const LOCATION_2 = [`Legendre`]
+const OFF_RECUP = [`Jour de récupération`]
+const OFF_CONGE_PAYE = [`Congés payés`]
+
+const
+
 /**
  * Lists the next 10 events on the user's primary calendar.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
@@ -83,19 +90,20 @@ function listEvents(auth) {
       maxResults: 400,
       singleEvents: true,
       orderBy: 'startTime',
-      // q: 'Congés',
-      // singleEvents: true,
-      // sharedExtendedProperty: `propertyName=Jour`,
     },
     (err, res) => {
       if (err) return console.log('The API returned an error: ' + err)
       const events = res.data.items
-      if (events.length) {
-        console.log('Upcoming 10 events:')
-        events.map((event, i) => {
-          const start = event.start.dateTime || event.start.date
-          console.log(`${start} - ${event.summary}`)
-        })
+       if (events.length) {
+
+        console.log('Jours de récupérations:')
+        events
+          .filter(event => OFF_RECUP.includes(event.summary))
+          .map((event, i) => {
+            const start = event.start.dateTime || event.start.date
+            console.log(`${start} - ${event.summary}`)
+          })
+
       } else {
         console.log('No upcoming events found.')
       }
