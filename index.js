@@ -78,10 +78,14 @@ function listEvents(auth) {
   calendar.events.list(
     {
       calendarId: '5l8951pg6g060dton2km0kveds@group.calendar.google.com',
-      timeMin: new Date().toISOString(),
-      maxResults: 10,
+      timeMin: `2019-01-01T00:00:00-00:00`,
+      timeMax: `2019-12-31T23:59:59-00:00`,
+      maxResults: 400,
       singleEvents: true,
       orderBy: 'startTime',
+      // q: 'Congés',
+      // singleEvents: true,
+      // sharedExtendedProperty: `propertyName=Jour`,
     },
     (err, res) => {
       if (err) return console.log('The API returned an error: ' + err)
