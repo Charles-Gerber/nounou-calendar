@@ -9,6 +9,8 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 // time.
 const TOKEN_PATH = 'token.json'
 
+const NB_EVENTS_TO_FETCH = 400
+
 // Load client secrets from a local file.
 fs.readFile('credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err)
@@ -69,12 +71,10 @@ function getAccessToken(oAuth2Client, callback) {
   })
 }
 
-const LOCATION_1 = [`Lebouteux`]
-const LOCATION_2 = [`Legendre`]
-const OFF_RECUP = [`Jour de récupération`]
-const OFF_CONGE_PAYE = [`Congés payés`]
-
-const
+const KEYS_LOCATION_1 = [`Lebouteux`]
+const KEYS_LOCATION_2 = [`Legendre`]
+const KEYS_OFF_RECUP = [`Jour de récupération`]
+const KEYS_OFF_CONGE_PAYE = [`Congés payés`]
 
 /**
  * Lists the next 10 events on the user's primary calendar.
@@ -87,26 +87,47 @@ function listEvents(auth) {
       calendarId: '5l8951pg6g060dton2km0kveds@group.calendar.google.com',
       timeMin: `2019-01-01T00:00:00-00:00`,
       timeMax: `2019-12-31T23:59:59-00:00`,
-      maxResults: 400,
+      maxResults: NB_EVENTS_TO_FETCH,
       singleEvents: true,
       orderBy: 'startTime',
     },
     (err, res) => {
       if (err) return console.log('The API returned an error: ' + err)
       const events = res.data.items
-       if (events.length) {
+      if (events.length) {
+        console.log(
+          `Nb events fetched : ${events.length} / ${NB_EVENTS_TO_FETCH} (limit)`
+        )
 
+        
+        events.forEach((event) => {
+
+        })
+
+        const daysOffRecup = events.filter(event =>
+          KEYS_OFF_RECUP.includes(event.summary)
+        )
         console.log('Jours de récupérations:')
-        events
-          .filter(event => OFF_RECUP.includes(event.summary))
-          .map((event, i) => {
-            const start = event.start.dateTime || event.start.date
-            console.log(`${start} - ${event.summary}`)
-          })
+        daysOffRecup.map((event, i) => {
+          logEvent(event)
+        })
+
+        const daysOffCongesPayes = events.filter(event =>
+          KEYS_OFF_CONGE_PAYE.includes(event.summary)
+        )
+        console.log('Jours Congés payés:')
+        daysOffCongesPayes.map((event, i) => {
+          logEvent(event)
+        })
 
       } else {
         console.log('No upcoming events found.')
       }
     }
   )
+
+  function logEvent(event) {
+    const start = event.start.dateTime || event.start.date
+    console.log(`${start} - ${event.summary}`)
+  }
 }
