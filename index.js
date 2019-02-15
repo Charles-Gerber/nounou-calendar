@@ -73,8 +73,9 @@ function getAccessToken(oAuth2Client, callback) {
 
 const KEYS_LOCATION_1 = [`Lebouteux`]
 const KEYS_LOCATION_2 = [`Legendre`]
-const KEYS_OFF_RECUP = [`Jour de récupération`]
-const KEYS_OFF_CONGE_PAYE = [`Congés payés`]
+const KEYS_OFF_RECUP = [`Jour de récupération`, `Jour de Récupération`]
+const KEYS_OFF_CONGE_PAYE = [`Congés payés`, `Congés Payés`]
+const KEYS_IGNORED = [`Férié`]
 
 /**
  * Lists the next 10 events on the user's primary calendar.
@@ -99,27 +100,44 @@ function listEvents(auth) {
           `Nb events fetched : ${events.length} / ${NB_EVENTS_TO_FETCH} (limit)`
         )
 
-        
-        events.forEach((event) => {
-
+        const daysAtLocation1 = []
+        const daysAtLocation2 = []
+        const daysOffRecup = []
+        const daysOffCongesPayes = []
+        const daysUnknown = []
+        const daysIgnored = []
+        events.forEach(event => {
+          if (KEYS_LOCATION_1.includes(event.summary)) {
+            daysAtLocation1.push(event)
+          } else if (KEYS_LOCATION_2.includes(event.summary)) {
+            daysAtLocation2.push(event)
+          } else if (KEYS_OFF_RECUP.includes(event.summary)) {
+            daysOffRecup.push(event)
+          } else if (KEYS_OFF_CONGE_PAYE.includes(event.summary)) {
+            daysOffCongesPayes.push(event)
+          } else if (KEYS_IGNORED.includes(event.summary)) {
+            daysIgnored.push(event)
+          } else {
+            daysUnknown.push(event)
+          }
         })
 
-        const daysOffRecup = events.filter(event =>
-          KEYS_OFF_RECUP.includes(event.summary)
+        console.log(
+          `Nb days in ${KEYS_LOCATION_1[0]} = ${daysAtLocation1.length}`
         )
-        console.log('Jours de récupérations:')
-        daysOffRecup.map((event, i) => {
-          logEvent(event)
-        })
-
-        const daysOffCongesPayes = events.filter(event =>
-          KEYS_OFF_CONGE_PAYE.includes(event.summary)
+        console.log(
+          `Nb days in ${KEYS_LOCATION_2[0]} = ${daysAtLocation2.length}`
         )
-        console.log('Jours Congés payés:')
-        daysOffCongesPayes.map((event, i) => {
-          logEvent(event)
-        })
+        console.log(`Nb days in ${KEYS_OFF_RECUP[0]} = ${daysOffRecup.length}`)
+        console.log(
+          `Nb days in ${KEYS_OFF_CONGE_PAYE[0]} = ${daysOffCongesPayes.length}`
+        )
+        console.log(`Nb days in ${KEYS_IGNORED[0]} = ${daysIgnored.length}`)
 
+        if (daysUnknown.length > 0) {
+          console.log(`WARNING : some unknown days FOUND!!`)
+          daysUnknown.map(event => console.log(event.summary))
+        }
       } else {
         console.log('No upcoming events found.')
       }
