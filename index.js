@@ -8,6 +8,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 // created automatically when the authorization flow completes for the first
 // time.
 const TOKEN_PATH = 'token.json'
+let ONE_DAY_DURATION_MS = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
 
 const NB_EVENTS_TO_FETCH = 400
 
@@ -106,15 +107,36 @@ function listEvents(auth) {
         const daysOffCongesPayes = []
         const daysUnknown = []
         const daysIgnored = []
+
+        let durationOfLocation1 = 0
+        let durationOfLocation2 = 0
+        let durationOfOffRecup = 0
+        let durationOfOffCongesPayes = 0
         events.forEach(event => {
           if (KEYS_LOCATION_1.includes(event.summary)) {
             daysAtLocation1.push(event)
+            durationOfLocation1 += calculateDuration(
+              event.start.date,
+              event.end.date
+            )
           } else if (KEYS_LOCATION_2.includes(event.summary)) {
             daysAtLocation2.push(event)
+            durationOfLocation2 += calculateDuration(
+              event.start.date,
+              event.end.date
+            )
           } else if (KEYS_OFF_RECUP.includes(event.summary)) {
             daysOffRecup.push(event)
+            durationOfOffRecup += calculateDuration(
+              event.start.date,
+              event.end.date
+            )
           } else if (KEYS_OFF_CONGE_PAYE.includes(event.summary)) {
             daysOffCongesPayes.push(event)
+            durationOfOffCongesPayes += calculateDuration(
+              event.start.date,
+              event.end.date
+            )
           } else if (KEYS_IGNORED.includes(event.summary)) {
             daysIgnored.push(event)
           } else {
@@ -122,15 +144,11 @@ function listEvents(auth) {
           }
         })
 
+        console.log(`Nb days in ${KEYS_LOCATION_1[0]} = ${durationOfLocation1}`)
+        console.log(`Nb days in ${KEYS_LOCATION_2[0]} = ${durationOfLocation2}`)
+        console.log(`Nb days in ${KEYS_OFF_RECUP[0]} = ${durationOfOffRecup}`)
         console.log(
-          `Nb days in ${KEYS_LOCATION_1[0]} = ${daysAtLocation1.length}`
-        )
-        console.log(
-          `Nb days in ${KEYS_LOCATION_2[0]} = ${daysAtLocation2.length}`
-        )
-        console.log(`Nb days in ${KEYS_OFF_RECUP[0]} = ${daysOffRecup.length}`)
-        console.log(
-          `Nb days in ${KEYS_OFF_CONGE_PAYE[0]} = ${daysOffCongesPayes.length}`
+          `Nb days in ${KEYS_OFF_CONGE_PAYE[0]} = ${durationOfOffCongesPayes}`
         )
         console.log(`Nb days in ${KEYS_IGNORED[0]} = ${daysIgnored.length}`)
 
@@ -143,6 +161,16 @@ function listEvents(auth) {
       }
     }
   )
+
+  function calculateDuration(startDate, endDate) {
+    const duration = Math.round(
+      Math.abs((new Date(startDate) - new Date(endDate)) / ONE_DAY_DURATION_MS)
+    )
+    // console.log(
+    //   `startDate : ${startDate} | endDate : ${endDate} ==> ${duration} days`
+    // )
+    return duration
+  }
 
   function logEvent(event) {
     const start = event.start.dateTime || event.start.date
