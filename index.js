@@ -87,8 +87,8 @@ function listEvents(auth) {
   calendar.events.list(
     {
       calendarId: '5l8951pg6g060dton2km0kveds@group.calendar.google.com',
-      timeMin: `2019-01-01T00:00:00-00:00`,
-      timeMax: `2019-12-31T23:59:59-00:00`,
+      timeMin: `2018-09-01T00:00:00-00:00`,
+      timeMax: `2019-08-31T23:59:59-00:00`,
       maxResults: NB_EVENTS_TO_FETCH,
       singleEvents: true,
       orderBy: 'startTime',
@@ -144,13 +144,23 @@ function listEvents(auth) {
           }
         })
 
-        console.log(`Nb days in ${KEYS_LOCATION_1[0]} = ${durationOfLocation1}`)
-        console.log(`Nb days in ${KEYS_LOCATION_2[0]} = ${durationOfLocation2}`)
-        console.log(`Nb days in ${KEYS_OFF_RECUP[0]} = ${durationOfOffRecup}`)
         console.log(
-          `Nb days in ${KEYS_OFF_CONGE_PAYE[0]} = ${durationOfOffCongesPayes}`
+          `Nombre de jours à ${KEYS_LOCATION_1[0]} = ${durationOfLocation1}`
         )
-        console.log(`Nb days in ${KEYS_IGNORED[0]} = ${daysIgnored.length}`)
+        console.log(
+          `Nombre de jours à ${KEYS_LOCATION_2[0]} = ${durationOfLocation2}`
+        )
+        console.log(
+          `Nombre de jours OFF ${KEYS_OFF_RECUP[0]} = ${durationOfOffRecup}`
+        )
+        console.log(
+          `Nombre de jours OFF ${
+            KEYS_OFF_CONGE_PAYE[0]
+          } = ${durationOfOffCongesPayes}`
+        )
+        console.log(
+          `Nombre de jours ${KEYS_IGNORED[0]} = ${daysIgnored.length}`
+        )
 
         if (daysUnknown.length > 0) {
           console.log(`WARNING : some unknown days FOUND!!`)
