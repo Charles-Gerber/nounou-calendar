@@ -2,6 +2,10 @@ const fs = require('fs')
 const readline = require('readline')
 const { google } = require('googleapis')
 
+//Sur un an (du 1er septembre 2018 au 31 Aout 2019) il doit y avoir :
+// - 12 jours de récup (1 par mois)
+// - 25 jours de CP (comme tout salarié qui travaille 5 jours par semaine)
+
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 // The file token.json stores the user's access and refresh tokens, and is
