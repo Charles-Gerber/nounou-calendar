@@ -148,6 +148,7 @@ function listEvents(auth) {
           }
         })
 
+        console.log(` ============== Compteurs ============== `)
         console.log(
           `Nombre de jours à ${KEYS_LOCATION_1[0]} = ${durationOfLocation1}`
         )
@@ -166,7 +167,14 @@ function listEvents(auth) {
           `Nombre de jours ${KEYS_IGNORED[0]} = ${daysIgnored.length}`
         )
 
+        console.log(``)
+        console.log(` ============== Détail des jours OFF ============== `)
+        logEventsDetails(KEYS_OFF_CONGE_PAYE[0], daysOffCongesPayes)
+        console.log(``)
+        logEventsDetails(KEYS_OFF_RECUP[0], daysOffRecup)
+
         if (daysUnknown.length > 0) {
+          console.log(` ============== ⚠️ Technique ⚠️ ============== `)
           console.log(`WARNING : some unknown days FOUND!!`)
           daysUnknown.map(event => console.log(event.summary))
         }
@@ -175,6 +183,18 @@ function listEvents(auth) {
       }
     }
   )
+
+  function logEventsDetails(eventType, eventsList) {
+    console.log(`Liste exhaustive des ${eventType}: `)
+    eventsList.forEach(event => {
+      console.log(
+        `du ${event.start.date} au ${event.end.date} = ${calculateDuration(
+          event.start.date,
+          event.end.date
+        )} jours`
+      )
+    })
+  }
 
   function calculateDuration(startDate, endDate) {
     const duration = Math.round(
