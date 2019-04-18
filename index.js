@@ -12,6 +12,9 @@ const DATE_MAX = `2019-08-31T23:59:59-00:00`
 const readableDateMin = DATE_MIN.substring(0, 9)
 const readableDateMax = DATE_MAX.substring(0, 9)
 
+const EXPECTED_NB_RECUP_DAYS = 12
+const EXPECTED_NB_CONGE_PAYE_DAYS = 25
+
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 // The file token.json stores the user's access and refresh tokens, and is
@@ -167,12 +170,14 @@ function listEvents(auth) {
           `Nombre de jours à ${KEYS_LOCATION_2[0]} = ${durationOfLocation2}`
         )
         console.log(
-          `Nombre de jours OFF ${KEYS_OFF_RECUP[0]} = ${durationOfOffRecup}`
+          `Nombre de jours OFF ${
+            KEYS_OFF_RECUP[0]
+          } = ${durationOfOffRecup} / ${EXPECTED_NB_RECUP_DAYS}`
         )
         console.log(
           `Nombre de jours OFF ${
             KEYS_OFF_CONGE_PAYE[0]
-          } = ${durationOfOffCongesPayes}`
+          } = ${durationOfOffCongesPayes} / ${EXPECTED_NB_CONGE_PAYE_DAYS}`
         )
         console.log(
           `Nombre de jours ${KEYS_IGNORED[0]} = ${daysIgnored.length}`
@@ -185,10 +190,16 @@ function listEvents(auth) {
         logEventsDetails(
           KEYS_OFF_CONGE_PAYE[0],
           daysOffCongesPayes,
-          durationOfOffCongesPayes
+          durationOfOffCongesPayes,
+          EXPECTED_NB_CONGE_PAYE_DAYS
         )
         console.log(``)
-        logEventsDetails(KEYS_OFF_RECUP[0], daysOffRecup, durationOfOffRecup)
+        logEventsDetails(
+          KEYS_OFF_RECUP[0],
+          daysOffRecup,
+          durationOfOffRecup,
+          EXPECTED_NB_RECUP_DAYS
+        )
 
         if (daysUnknown.length > 0) {
           console.log(
@@ -203,7 +214,12 @@ function listEvents(auth) {
     }
   )
 
-  function logEventsDetails(eventType, eventsList, totalDuration) {
+  function logEventsDetails(
+    eventType,
+    eventsList,
+    totalDuration,
+    expectedDuration
+  ) {
     console.log(`Liste exhaustive des ${eventType}: `)
     console.log('--------------------------------------')
     eventsList.forEach(event => {
@@ -215,7 +231,7 @@ function listEvents(auth) {
       )
     })
     console.log('--------------------------------------')
-    console.log(`Total = ${totalDuration}`)
+    console.log(`Total = ${totalDuration} / ${expectedDuration}`)
   }
 
   function calculateDuration(startDate, endDate) {
