@@ -148,7 +148,7 @@ function listEvents(auth) {
           }
         })
 
-        console.log(` ============== Compteurs ============== `)
+        console.log(` =================== Compteurs =================== `)
         console.log(
           `Nombre de jours à ${KEYS_LOCATION_1[0]} = ${durationOfLocation1}`
         )
@@ -168,13 +168,17 @@ function listEvents(auth) {
         )
 
         console.log(``)
-        console.log(` ============== Détail des jours OFF ============== `)
-        logEventsDetails(KEYS_OFF_CONGE_PAYE[0], daysOffCongesPayes)
+        console.log(` =================== Détail des jours OFF =================== `)
+        logEventsDetails(
+          KEYS_OFF_CONGE_PAYE[0],
+          daysOffCongesPayes,
+          durationOfOffCongesPayes
+        )
         console.log(``)
-        logEventsDetails(KEYS_OFF_RECUP[0], daysOffRecup)
+        logEventsDetails(KEYS_OFF_RECUP[0], daysOffRecup, durationOfOffRecup)
 
         if (daysUnknown.length > 0) {
-          console.log(` ============== ⚠️ Technique ⚠️ ============== `)
+          console.log(` =================== ⚠️ Technique ⚠️ =================== `)
           console.log(`WARNING : some unknown days FOUND!!`)
           daysUnknown.map(event => console.log(event.summary))
         }
@@ -184,8 +188,9 @@ function listEvents(auth) {
     }
   )
 
-  function logEventsDetails(eventType, eventsList) {
+  function logEventsDetails(eventType, eventsList, totalDuration) {
     console.log(`Liste exhaustive des ${eventType}: `)
+    console.log('--------------------------------------')
     eventsList.forEach(event => {
       console.log(
         `du ${event.start.date} au ${event.end.date} = ${calculateDuration(
@@ -194,6 +199,8 @@ function listEvents(auth) {
         )} jours`
       )
     })
+    console.log('--------------------------------------')
+    console.log(`Total = ${totalDuration}`)
   }
 
   function calculateDuration(startDate, endDate) {
