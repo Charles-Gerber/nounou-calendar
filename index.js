@@ -6,6 +6,12 @@ const { google } = require('googleapis')
 // - 12 jours de récup (1 par mois)
 // - 25 jours de CP (comme tout salarié qui travaille 5 jours par semaine)
 
+const DATE_MIN = `2018-09-01T00:00:00-00:00`
+const DATE_MAX = `2019-08-31T23:59:59-00:00`
+
+const readableDateMin = DATE_MIN.substring(0, 9)
+const readableDateMax = DATE_MAX.substring(0, 9)
+
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 // The file token.json stores the user's access and refresh tokens, and is
@@ -91,8 +97,8 @@ function listEvents(auth) {
   calendar.events.list(
     {
       calendarId: '5l8951pg6g060dton2km0kveds@group.calendar.google.com',
-      timeMin: `2018-09-01T00:00:00-00:00`,
-      timeMax: `2019-08-31T23:59:59-00:00`,
+      timeMin: DATE_MIN,
+      timeMax: DATE_MAX,
       maxResults: NB_EVENTS_TO_FETCH,
       singleEvents: true,
       orderBy: 'startTime',
@@ -103,6 +109,11 @@ function listEvents(auth) {
       if (events.length) {
         console.log(
           `Nb events fetched : ${events.length} / ${NB_EVENTS_TO_FETCH} (limit)`
+        )
+        console.log('')
+
+        console.log(
+          `Période concernée : du ${readableDateMin} au ${readableDateMax}`
         )
 
         const daysAtLocation1 = []
@@ -168,7 +179,9 @@ function listEvents(auth) {
         )
 
         console.log(``)
-        console.log(` =================== Détail des jours OFF =================== `)
+        console.log(
+          ` =================== Détail des jours OFF =================== `
+        )
         logEventsDetails(
           KEYS_OFF_CONGE_PAYE[0],
           daysOffCongesPayes,
@@ -178,7 +191,9 @@ function listEvents(auth) {
         logEventsDetails(KEYS_OFF_RECUP[0], daysOffRecup, durationOfOffRecup)
 
         if (daysUnknown.length > 0) {
-          console.log(` =================== ⚠️ Technique ⚠️ =================== `)
+          console.log(
+            ` =================== ⚠️ Technique ⚠️ =================== `
+          )
           console.log(`WARNING : some unknown days FOUND!!`)
           daysUnknown.map(event => console.log(event.summary))
         }
